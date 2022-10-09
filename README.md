@@ -1,4 +1,4 @@
-# vue2-template-ivew
+# vue2-template-iview
 iview【基于vue.js的UI组件库】
           |
 从 4.0.0 开始，原先的 npm 包 iview 将不再使用，需要替换为新包 view-design
