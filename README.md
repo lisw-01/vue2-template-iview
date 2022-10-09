@@ -5,7 +5,7 @@ iview【基于vue.js的UI组件库】
           |
       view-design
           |
-vue2.x    基于vue2.x的版本  【本模板基于 推荐工程：view-ui-project】
+vue2.x    基于vue2.x的版本  【本模板基于vue2.x的版本，view-design4.4.0】
           |
 vue3.x    基于vue3.x的版本
         
