@@ -54,4 +54,23 @@ util.getWindowSize = function () {
     }
 }
 
+
+// 根据layout 出口的路由配置信息，获取  左侧菜单显示的菜单
+util.getLayoutStaticMenus = function (layoutStaticRoutes) {
+    const menulist = [];
+    layoutStaticRoutes.forEach((route) => {
+        // 带type属性的菜单才是二级菜单， 否则是非菜单页面
+        if (route.type && route.type == 'menu') {
+            const tempMenuObj = {}; //菜单信息
+            if (route.children) {
+                tempMenuObj.children = util.getLayoutStaticMenus(route.children);
+            }
+            tempMenuObj.name = route.name; // 菜单名---根据配置的路由名获取
+            tempMenuObj.icon = route.icon; // 菜单显示的图标---根据配置的路由图标获取
+            menulist.push(tempMenuObj)
+        }
+    });
+    return menulist;
+}
+
 export default util;

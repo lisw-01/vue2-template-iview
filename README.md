@@ -1,7 +1,11 @@
 # vue2-template-iview
 
 > 基于vue2.x和 view-design4.4.0的 项目框架
-
+iview----》view-design(4.0.0开始)
+               |
+             基于vue2.x的，称为 View UI   [http://v4.iviewui.com/]
+               |
+             基于vue3.x的，称为 View UI Plus [https://www.iviewui.com/]
 ## Build Setup
 
 ``` bash

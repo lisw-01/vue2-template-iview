@@ -1,9 +1,13 @@
+import router from '@/router/index'
 const app = {
     namespaced: true,
     // vuex中的状态都是响应式的
     state: {
         singkey: '', // 服务端返回的 HmacSHA1   数据传输加密密钥
         token: '', //  请求token(有时效)
+        asyncRoutesGetOver:false,  // 异步路由数据是否请求过了
+        menuList:[], //左侧菜单数据
+
     },
     //通过 store.commit('test',{}) mutations中的同步函数（必须是同步函数） 更改  state中的状态（同步）
     //mutation 都是同步事务
@@ -21,6 +25,16 @@ const app = {
         //退出系统,清空必要的数据
         layout(state) {
             sessionStorage.clear();
+        },
+        // 设置左侧菜单数据
+        setMenuList(state,menulist){
+            state.menuList = state.menuList.concat(menulist);  // 动态路由获取的菜单需要concat
+        },
+        // 更新路由数据 ---增加了动态路由
+        updataRoutes(state,routes){
+            debugger
+            //router.addRoutes(routes)
+            state.asyncRoutesGetOver = true
         }
     },
 

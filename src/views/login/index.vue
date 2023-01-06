@@ -110,9 +110,7 @@ export default {
                 name: aes_usrname,
                 pwd: aes_pwd,
               });
-              this.$router.push({
-                name:"layout"
-              });
+              this.$router.push('/echarts');
             } else {
               this.$Message.error(data.err);
             }
@@ -133,7 +131,7 @@ export default {
 .page-login {
   width: 100%;
   height: 100%;
-  background-image: url("~@/assets/image/loginbg.jpg");
+ // background-image: url("~@/assets/image/loginbg.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   position: relative;

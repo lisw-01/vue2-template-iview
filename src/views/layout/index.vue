@@ -18,12 +18,24 @@
             :sliderCollapsed="isCollapsed"
             @toggleSliderCollapsed="toggleSliderCollapsedhand"
           ></content-toolbar>
+          <content-tabs></content-tabs>
         </Header>
         <Content class="layout-content" :style="contentStyle">
-          Content
+           <!-- 缓存的页面 -->
+          <keep-alive>
+            <router-view
+              :key="$route.name"
+              v-if="$route.meta.keepAlive"
+            ></router-view>
+          </keep-alive>
+          <!-- 不需要缓存的页面 -->
+          <router-view
+            :key="$route.name"
+            v-if="!$route.meta.keepAlive"
+          ></router-view>
         </Content>
         <Footer class="layout-footer">
-           <content-footer></content-footer>
+          <content-footer></content-footer>
         </Footer>
       </Layout>
     </Layout>
@@ -44,7 +56,7 @@ export default {
       let documentHeight = this.$util.getWindowSize().h;
       const headerHeight = 80; // Header高度
       const footerHeight = 50; // Footer高度
-      documentHeight = documentHeight - headerHeight - footerHeight -2;
+      documentHeight = documentHeight - headerHeight - footerHeight - 2;
       return {
         height: `${documentHeight}px`,
         overFlow: "auto hidden",
@@ -57,6 +69,7 @@ export default {
     "layout-slider-collapsed": () =>
       import("@/views/layout/slider/collapsed-slider"),
     "content-toolbar": () => import("@/views/layout/content-toolbar/index"),
+    "content-tabs": () => import("@/views/layout/content-tabs/index"),
     "content-footer": () => import("@/views/layout/content-footer/index"),
   },
   methods: {

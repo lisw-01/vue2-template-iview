@@ -2,9 +2,13 @@
   <div>404</div>
 </template>
 <script>
+import { re } from 'is2';
+
 export default {
-  name: "404",
-  data: () => {},
+  name: "notfond",
+  data: () => {
+    return {}
+  },
 };
 </script>
 <style lang="less" scoped>
