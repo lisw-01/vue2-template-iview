@@ -110,7 +110,9 @@ export default {
                 name: aes_usrname,
                 pwd: aes_pwd,
               });
-              this.$router.push('/echarts');
+              this.$router.push({
+                name:'A-a'
+              });
             } else {
               this.$Message.error(data.err);
             }

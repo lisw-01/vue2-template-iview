@@ -1,12 +1,13 @@
-import router from '@/router/index'
+
 const app = {
     namespaced: true,
     // vuex中的状态都是响应式的
     state: {
         singkey: '', // 服务端返回的 HmacSHA1   数据传输加密密钥
         token: '', //  请求token(有时效)
-        asyncRoutesGetOver:false,  // 异步路由数据是否请求过了
-        menuList:[], //左侧菜单数据
+        asyncRoutesGetOver: false,  // 异步路由数据是否请求过了
+        menuList: [], //左侧菜单数据
+        openNames: [], // 展开的 Submenu 的 name 集合  Array
 
     },
     //通过 store.commit('test',{}) mutations中的同步函数（必须是同步函数） 更改  state中的状态（同步）
@@ -27,14 +28,31 @@ const app = {
             sessionStorage.clear();
         },
         // 设置左侧菜单数据
-        setMenuList(state,menulist){
+        setMenuList(state, menulist) {
             state.menuList = state.menuList.concat(menulist);  // 动态路由获取的菜单需要concat
         },
-        // 更新路由数据 ---增加了动态路由
-        updataRoutes(state,routes){
-            debugger
-            //router.addRoutes(routes)
-            state.asyncRoutesGetOver = true
+        // 更新打开的菜单
+        updateOpenNames(state, obj) {
+            const { type, data } = obj;
+            if (type == "openchange") {
+                state.openNames = data;
+            }
+            if (type == 'matched') {
+                if (data.length) {
+                    state.openNames = [];
+                    const menulist = state.menuList;
+                    const mathed0 = data[0];
+                    menulist.forEach((menu) => {
+                        const { name } = menu;
+                        if (mathed0.name == name) {
+                            state.openNames.push(name);
+                        }
+                    })
+
+                } else {
+                    state.openNames = data;
+                }
+            }
         }
     },
 
@@ -45,9 +63,8 @@ const app = {
         asyncTest(context, Payload) {
             // context 和store实例具有相同方法和属性的对象，但不是store实例，因为 Modules 
             //context.commit('test'，{}); // 提交 mutation
-        }
+        },
     }
 }
-
 export default app;
 

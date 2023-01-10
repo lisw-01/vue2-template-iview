@@ -5,11 +5,11 @@
         ref="side"
         hide-trigger
         collapsible
-        :width="200"
+        :width=sliderwidth
         :collapsed-width="80"
         v-model="isCollapsed"
       >
-        <layout-slider-open v-if="!isCollapsed"></layout-slider-open>
+        <layout-slider-open v-if="!isCollapsed" :menuwidth="menuwidth" :menuList="menuList"></layout-slider-open>
         <layout-slider-collapsed v-if="isCollapsed"></layout-slider-collapsed>
       </Sider>
       <Layout>
@@ -42,14 +42,17 @@
   </div>
 </template>
 <script>
+
 export default {
   name: "layout",
   data: () => {
     return {
       isCollapsed: false, // 控制slider的收起/展开
+      sliderwidth:'200'
     };
   },
   props: {}, //父组件传递参数，可选
+  // 计算属性，可选
   computed: {
     // layout理由出口  页面容器的样式
     contentStyle() {
@@ -62,7 +65,13 @@ export default {
         overFlow: "auto hidden",
       };
     },
-  }, // 计算属性，可选
+    menuList(){
+      return this.$store.state.app.menuList;
+    },
+    menuwidth(){
+      return this.sliderwidth+'px';
+    }
+  },
   watch: {}, //可选
   components: {
     "layout-slider-open": () => import("@/views/layout/slider/open-slider"),

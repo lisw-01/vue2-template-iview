@@ -49,7 +49,7 @@ exports.getroles = async function (req, res) {
   const endIndex = pagenum * pagesize;
   const pageData = token_dbroles.slice(startIndex, endIndex);
   console.log("请求---sys/getroles 分页--- start/////");
-  console.log("第"+pagenum+"页", '每页'+pagesize+"数据")
+  console.log("第" + pagenum + "页", '每页' + pagesize + "数据")
   console.log({
     total: token_dbroles.length,
     list: pageData ? pageData : []
@@ -100,7 +100,7 @@ exports.getusers = async function (req, res) {
   const endIndex = pagenum * pagesize;
   const pageData = DB.users.slice(startIndex, endIndex);
   console.log("请求---sys/getusers 分页--- start/////");
-  console.log("第"+pagenum+"页", '每页'+pagesize+"数据")
+  console.log("第" + pagenum + "页", '每页' + pagesize + "数据")
   console.log({
     total: pageData.length,
     list: pageData ? pageData : []
@@ -114,4 +114,36 @@ exports.getusers = async function (req, res) {
     }
   });
   return false;
+}
+
+
+
+exports.getAsyncRoutes = async function (req, res) {
+  const token_ = token.getHeaderToken(req);
+  //根据token在user中查询到 username
+  let username_ = DB.users.find((item) => {
+    return item.token = token_;
+  }).username;
+  console.log("username_", username_)
+  //根据username 在 role中查询到 roleid 【本示例 只取一个角色】
+  const roleId_ = DB.roles.find((item) => {
+    return item.username.includes(username_);
+  }).id;
+  console.log("roleId_", roleId_)
+  // 根据roleid 在 DB_AYSNC_ROUTES  中查询 关联的路由
+  const asyncRoutes = DB.asyncRoutes.filter((item) => {
+    return item.roleid.includes(roleId_) || !item.roleid.length
+  });
+  console.log("请求---sys/getAsyncRoutes--- start/////");
+  console.log({
+    list: asyncRoutes ? asyncRoutes : []
+  });
+  console.log("请求---sys/getAsyncRoutes--- end/////");
+  res.send({
+    status: 'success',
+    data: {
+      list: asyncRoutes ? asyncRoutes : []
+    }
+  });
+  return false
 }

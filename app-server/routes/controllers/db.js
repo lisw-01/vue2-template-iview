@@ -157,3 +157,38 @@ DB_MENU = [{
   leval: 3
 }];
 exports.menus = DB_MENU;
+
+const DB_ASYNC_ROUTES = [{
+  id: 1,
+  name: 'D',
+  path: '/D',
+  title: 'D',
+  icon: 'ios-pie',
+  type: 'menu',
+  componentPath: 'layout/index.vue',
+  pid: '-1',
+  roleid: [1],
+}, {
+  id: 2,
+  name: 'D-a',
+  path: '/D-a',
+  title: 'D-a',
+  icon: 'ios-pie',
+  type: 'menu',
+  componentPath: 'D/D-a/index.vue',
+  pid: 1,
+  roleid: [1],
+}, {
+  id: 3,
+  name: "D-b",
+  path: '/D-b',
+  title: 'D-b',
+  icon: 'ios-pie',
+  type: 'menu',
+  componentPath: 'D/D-b/index.vue',
+  pid: 1,
+  roleid: [1],
+}]
+exports.asyncRoutes = DB_ASYNC_ROUTES;
+
+

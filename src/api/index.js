@@ -1,5 +1,7 @@
 import login from "./login";
+import sys from "./sys";
 
-export default{
-    ...login
+export default {
+    ...login,
+    ...sys
 }

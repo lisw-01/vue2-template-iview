@@ -85,7 +85,7 @@ const vueInstance = new Vue({
   render: (h) => h(App),
 }).$mount("#app");
 
-export  {vueInstance};
+export { vueInstance };
 // export default new Vue({
 //   el: '#app',
 //   router,
