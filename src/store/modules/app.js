@@ -8,6 +8,7 @@ const app = {
         asyncRoutesGetOver: false,  // 异步路由数据是否请求过了
         menuList: [], //左侧菜单数据
         openNames: [], // 展开的 Submenu 的 name 集合  Array
+        BreadcrumbItems: [], // 面包屑数据对象(对象  是  matched)
 
     },
     //通过 store.commit('test',{}) mutations中的同步函数（必须是同步函数） 更改  state中的状态（同步）
@@ -39,19 +40,52 @@ const app = {
             }
             if (type == 'matched') {
                 if (data.length) {
+                    // 如果选中的是三级菜单，那么openNames 需要一级菜单+二级菜单
                     state.openNames = [];
                     const menulist = state.menuList;
-                    const mathed0 = data[0];
+                    const mathed0 = data[0];  //一级菜单
+                    const mathed1 = data[1]; // 二级菜单，  左侧菜单最多三级
                     menulist.forEach((menu) => {
-                        const { name } = menu;
+                        const { name, children } = menu;
                         if (mathed0.name == name) {
                             state.openNames.push(name);
                         }
+                        if (children && children.length) {
+                            children.forEach((menu2) => {
+                                const { name } = menu2;
+                                if (mathed1.name == name) {
+                                    state.openNames.push(name);
+                                }
+                            })
+                        }
                     })
-
                 } else {
                     state.openNames = data;
                 }
+            }
+        },
+        //更新面包屑数据
+        updateBreadCrumbItems(state, items) {
+            // 保持和左侧菜单树一致 
+            if (items && items.length) {
+                let temp = [...items];
+                const mathed0 = items[0];
+                const { name } = mathed0;
+                //（左侧菜单，当二级菜单有且只有一个，且该二级菜单下无三级菜单，  二级菜单会提级）
+                for (let i = 0; i < state.menuList.length; i++) {
+                    const name1 = state.menuList[i].name;
+                    const children1 = state.menuList[i].children;
+                    if (name == name1) {
+                        //判断一级菜单是否只有一个二级菜单，且该二级菜单下无三级菜单
+                        if (children1 && children1.length == 1 && !children1[0].children) {
+                            temp.shift();
+                            break
+                        }
+                    }
+                }
+                state.BreadcrumbItems = temp;
+            } else {
+                state.BreadcrumbItems = [];
             }
         }
     },

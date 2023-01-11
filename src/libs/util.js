@@ -104,7 +104,7 @@ util.toStaticRoutes = function (aysncRoutes, PID) {
                 icon: icon,
                 type: type
             }
-            temp.component = componentPath;
+            temp.component = () => import(`@/views/${componentPath}`);  // 异步加载的路由，需要 插件  babel-plugin-syntax-dynamic-import 支持
             const children = util.toStaticRoutes(aysncRoutes, id);
             if (children.length) {
                 temp['children'] = children;

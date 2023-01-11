@@ -9,6 +9,7 @@
         :collapsed-width="80"
         v-model="isCollapsed"
       >
+        <app-logo :isCollapsed="isCollapsed"></app-logo>
         <layout-slider-open v-if="!isCollapsed" :menuwidth="menuwidth" :menuList="menuList"></layout-slider-open>
         <layout-slider-collapsed v-if="isCollapsed"></layout-slider-collapsed>
       </Sider>
@@ -72,7 +73,11 @@ export default {
       return this.sliderwidth+'px';
     }
   },
-  watch: {}, //可选
+  watch: {
+    $route(to){
+       debugger
+    }
+  }, //可选
   components: {
     "layout-slider-open": () => import("@/views/layout/slider/open-slider"),
     "layout-slider-collapsed": () =>
@@ -80,6 +85,7 @@ export default {
     "content-toolbar": () => import("@/views/layout/content-toolbar/index"),
     "content-tabs": () => import("@/views/layout/content-tabs/index"),
     "content-footer": () => import("@/views/layout/content-footer/index"),
+    "app-logo":()=>import('@/views/layout/app-logo/index')
   },
   methods: {
     toggleSliderCollapsedhand() {
