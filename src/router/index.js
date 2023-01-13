@@ -87,7 +87,7 @@ router.beforeEach((to, from, next) => {
       store.commit('app/setMenuList', layoutStaticMenus || []);
       //添加动态路由
       util.getAsyncRoutes().then((resp) => {
-        const aysRoutesTree = util.toStaticRoutes(resp, '-1');
+        const aysRoutesTree = util.toStaticRoutes(resp, '-1');  // 表格数据转树形数据
         aysRoutesTree.forEach(v => {
           router.addRoute(v); //添加,  添加完路由还会重复执行一遍路由守卫
         });

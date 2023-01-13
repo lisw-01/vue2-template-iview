@@ -2,7 +2,7 @@
   <div class="slider-menu-open">
     <Menu
       :mode="menu_mode"
-      :theme="menu_theme"
+      :theme="menutheme"
       :accordion="menu_accordion"
       :width="menuwidth"
       :active-name="activeMenuName"
@@ -11,18 +11,18 @@
       @on-open-change="updateOpenNames"
     >
       <template v-if="menuList.length">
-        <template v-for="(menu, index) in menuList">
+        <template v-for="(menu1, index) in menuList">
           <!-- 一级菜单模板 -->
-          <template v-if="!menu.children">
+          <template v-if="!menu1.children">
             <MenuItem
-              :name="menu.name"
-              :title="menu.title"
+              :name="menu1.name"
+              :title="menu1.title"
               :key="'menu1' + index"
             >
               <span class="menu-item" :key="'menu-item1' + index">
-                <Icon :type="menu.icon" :key="'icon1' + index" />
+                <Icon :type="menu1.icon" :key="'icon1' + index" />
                 <span class="title-span" :key="'title-span1' + index">{{
-                  menu.title
+                  menu1.title
                 }}</span>
               </span>
             </MenuItem>
@@ -30,45 +30,46 @@
           <!-- 该一级菜单，有且只有一个二级菜单，并且该二级菜单没有三级菜单。 则该二级菜单提高等级 为一级菜单 -->
           <template
             v-else-if="
-              menu.children &&
-              menu.children.length == 1 &&
-              !menu.children[0].children
+              menu1.children &&
+              menu1.children.length == 1 &&
+              !menu1.children[0].children
             "
           >
             <MenuItem
-              :name="menu.children[0].name"
-              :title="menu.children[0].title"
+              :name="menu1.children[0].name"
+              :title="menu1.children[0].title"
               :key="'menu1' + index"
               :class="[
-                activeMenuName === menu.children[0].name && menu_theme == 'dark'
+                activeMenuName === menu1.children[0].name &&
+                menutheme == 'dark'
                   ? 'menu-item-selected-dark'
                   : '',
-                activeMenuName === menu.children[0].name &&
-                menu_theme == 'light'
+                activeMenuName === menu1.children[0].name &&
+                menutheme == 'light'
                   ? 'menu-item-selected-light'
                   : '',
               ]"
             >
               <span class="menu-item" :key="'menu-item1' + index">
-                <Icon :type="menu.children[0].icon" :key="'icon1' + index" />
+                <Icon :type="menu1.children[0].icon" :key="'icon1' + index" />
                 <span class="title-span" :key="'title-span1' + index">{{
-                  menu.children[0].title
+                  menu1.children[0].title
                 }}</span>
               </span>
             </MenuItem>
           </template>
           <!-- 该一级菜单，有>1个二级菜单； 或者有且只有一个二级菜单，但是该二级菜单有三级菜单 -->
-          <template v-else-if="menu.children && menu.children.length >= 1">
-            <Submenu :name="menu.name" :key="'menu1' + index">
+          <template v-else-if="menu1.children && menu1.children.length >= 1">
+            <Submenu :name="menu1.name" :key="'menu1' + index">
               <template slot="title">
                 <span class="menu-item" :key="'menu-item1' + index">
-                  <Icon :type="menu.icon" :key="'icon1' + index" />
+                  <Icon :type="menu1.icon" :key="'icon1' + index" />
                   <span class="title-span" :key="'title-span1' + index">{{
-                    menu.title
+                    menu1.title
                   }}</span>
                 </span>
               </template>
-              <template v-for="(menu2, index) in menu.children">
+              <template v-for="(menu2, index) in menu1.children">
                 <!-- 二级菜单下没有三级菜单 -->
                 <template v-if="!menu2.children">
                   <MenuItem
@@ -128,7 +129,6 @@ export default {
   data: () => {
     return {
       menu_mode: "vertical", // 菜单类型，可选值为 horizontal（水平） 和 vertical（垂直） 默认 vertical
-      menu_theme: "dark", // 主题，可选值为 light|dark |primary，其中 primary 只适用于 mode="horizontal"  默认 light
       menu_accordion: true, // true-手风琴模式 false-- 默认值  false
     };
   },
@@ -143,6 +143,13 @@ export default {
       type: String,
       default: () => {
         return "200px";
+      },
+    },
+    //主题，可选值为 light|dark |primary，其中 primary 只适用于 mode="horizontal"  默认 light
+    menutheme: {
+      type: String,
+      default: () => {
+        return "dark";
       },
     },
   },

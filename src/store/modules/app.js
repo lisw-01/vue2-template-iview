@@ -1,3 +1,4 @@
+import util from '@/libs/util';
 
 const app = {
     namespaced: true,
@@ -6,7 +7,8 @@ const app = {
         singkey: '', // 服务端返回的 HmacSHA1   数据传输加密密钥
         token: '', //  请求token(有时效)
         asyncRoutesGetOver: false,  // 异步路由数据是否请求过了
-        menuList: [], //左侧菜单数据
+        menuList: [], //左侧菜单数据， 有菜单之间的关系
+        staticRoutes:[], //路由
         openNames: [], // 展开的 Submenu 的 name 集合  Array
         BreadcrumbItems: [], // 面包屑数据对象(对象  是  matched)
 
@@ -30,7 +32,8 @@ const app = {
         },
         // 设置左侧菜单数据
         setMenuList(state, menulist) {
-            state.menuList = state.menuList.concat(menulist);  // 动态路由获取的菜单需要concat
+            state.menuList = state.menuList.concat(util.LayoutStaticMenusLink(menulist,null));  // 动态路由获取的菜单需要concat
+            console.log('左侧菜单数据',state.menuList);
         },
         // 更新打开的菜单
         updateOpenNames(state, obj) {

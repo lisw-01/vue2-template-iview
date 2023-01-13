@@ -56,27 +56,12 @@ util.getWindowSize = function () {
 }
 
 
-// 根据layout 出口的路由配置信息，获取  左侧菜单显示的菜单
-util.getLayoutStaticMenus = function (layoutStaticRoutes) {
-    const menulist = [];
-    layoutStaticRoutes.forEach((route) => {
-        // 带type属性的菜单才是二级菜单， 否则是非菜单页面
-        const { name, path, meta } = route;
-        if (meta.type && meta.type == 'menu') {
-            const tempMenuObj = {}; //菜单信息
-            if (route.children) {
-                tempMenuObj.children = util.getLayoutStaticMenus(route.children);
-            }
-            tempMenuObj.name = route.name; //菜单名(用于菜单的name属性)---根据配置的路由的name获取
-            tempMenuObj.title = meta.title; //菜单显示名---根据配置的路由title获取
-            tempMenuObj.icon = meta.icon; // 菜单显示的图标---根据配置的路由图标获取
-            menulist.push(tempMenuObj)
-        }
-    });
-    return menulist;
-}
 
 
+/**
+ * 根据服务获取  动态路由数据---表格形式的返回，数据源参看 app-server中的 db.js
+ * @returns 
+ */
 util.getAsyncRoutes = function () {
     return new Promise((resolve, reject) => {
         api.getAsyncRoutes().then((resp) => {
@@ -91,10 +76,16 @@ util.getAsyncRoutes = function () {
     });
 }
 
+/**
+ * 动态路由（表格形式） 转化为 静态路由（static-routes.js中的数据格式）
+ * @param {*} aysncRoutes 
+ * @param {*} PID 
+ * @returns 
+ */
 util.toStaticRoutes = function (aysncRoutes, PID) {
     const asyncRouteRtree = [];
     aysncRoutes.forEach((asyncRoute) => {
-        const { id, path, name, title, icon, type, pid, componentPath } = asyncRoute;
+        const { id, path, name, title, icon, menu, pid, componentPath } = asyncRoute;
         const temp = {};
         if (pid == PID) {
             temp.path = path;
@@ -102,7 +93,7 @@ util.toStaticRoutes = function (aysncRoutes, PID) {
             temp.meta = {
                 title: title,
                 icon: icon,
-                type: type
+                menu: menu
             }
             temp.component = () => import(`@/views/${componentPath}`);  // 异步加载的路由，需要 插件  babel-plugin-syntax-dynamic-import 支持
             const children = util.toStaticRoutes(aysncRoutes, id);
@@ -113,6 +104,80 @@ util.toStaticRoutes = function (aysncRoutes, PID) {
         }
     })
     return asyncRouteRtree
+}
+/**
+ * 静态路由数据。转化为左侧菜单数据  【非菜单页面 menu=false，不会在菜单数据中】
+ * @param {*} layoutStaticRoutes 
+ * @returns 
+ */
+util.getLayoutStaticMenus = function (layoutStaticRoutes) {
+    const menulist = [];
+    layoutStaticRoutes.forEach((route) => {
+        // 带type属性的菜单才是二级菜单， 否则是非菜单页面
+        const { name, path, meta } = route;
+        //是菜单
+        if (meta.menu) {
+            const tempMenuObj = {}; //菜单信息
+            if (route.children) {
+                tempMenuObj.children = util.getLayoutStaticMenus(route.children);
+            }
+            tempMenuObj.name = route.name; //菜单名(用于菜单的name属性)---根据配置的路由的name获取
+            tempMenuObj.title = meta.title; //菜单显示名---根据配置的路由title获取
+            tempMenuObj.icon = meta.icon; // 菜单显示的图标---根据配置的路由图标获取
+            menulist.push(tempMenuObj)
+        }
+    });
+    return menulist;
+}
+
+util.LayoutStaticMenusLink = function (staticMenus, parentMenuName) {
+    const menulistLink = [];
+    staticMenus.forEach((menu) => {
+        const { name, title, icon } = menu;
+        //是菜单
+        const tempMenuObj = {}; //菜单信息
+        if (menu.children) {
+            tempMenuObj.children = util.LayoutStaticMenusLink(menu.children, name);
+        }
+        tempMenuObj.name = name;
+        tempMenuObj.title = title;
+        tempMenuObj.icon = icon;
+        if (parentMenuName) {
+            tempMenuObj.parentMenuName = parentMenuName
+        }
+        menulistLink.push(tempMenuObj)
+    });
+    return menulistLink;
+}
+
+/**
+ * 根据叶子节点名称【唯一的】。从树形数据中找到该叶子节点的根节点
+ */
+util.getLeaf = function (tree, leafname) {
+    let leaf;
+    const tableDatas = util.getTableData(tree);
+    for (let i = 0; i < tableDatas.length; i++) {
+        const d = tableDatas[i];
+        if (leafname == d.name) {
+            leaf = d;
+            if (d.parentMenuName) {
+                leaf = util.getLeaf(tree, d.parentMenuName)
+            }
+        }
+    }
+    return leaf;
+}
+
+util.getTableData = function (tree) {
+    let table = [];
+    tree.forEach((obj) => {
+        table.push({ ...obj });
+        if (obj.children && obj.children.length) {
+            const temp = util.getTableData(obj.children);
+            table = table.concat(temp)
+        }
+    })
+    return table;
 }
 
 export default util;

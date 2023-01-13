@@ -22,13 +22,15 @@
         style="margin-left: 20px"
         trigger="click"
         placement="bottom-end"
-        @on-click="itemClick"
+        @on-click="menuClick"
       >
         <div class="username">admin</div>
         <Avatar icon="ios-person" size="large" style="cursor: pointer" />
         <DropdownMenu slot="list">
           <DropdownItem name="signOut">退出</DropdownItem>
           <DropdownItem name="userInfo">用户</DropdownItem>
+          <DropdownItem name="dark">dark</DropdownItem>
+          <DropdownItem name="light">light</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </div>
@@ -59,7 +61,7 @@ export default {
     toggleSliderDone() {
       this.$emit("toggleSliderCollapsed");
     },
-    itemClick(dropdownItemName) {
+    menuClick(dropdownItemName) {
       switch (dropdownItemName) {
         case "signOut":
           {
@@ -68,6 +70,16 @@ export default {
           break;
         case "userInfo":
           {
+          }
+          break;
+        case "dark":
+          {
+            this.$emit("themeChange",'dark');
+          }
+          break;
+        case "light":
+          {
+            this.$emit("themeChange",'light');
           }
           break;
       }

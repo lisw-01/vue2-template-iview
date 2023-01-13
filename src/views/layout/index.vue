@@ -10,14 +10,15 @@
         v-model="isCollapsed"
       >
         <app-logo :isCollapsed="isCollapsed"></app-logo>
-        <layout-slider-open v-if="!isCollapsed" :menuwidth="menuwidth" :menuList="menuList"></layout-slider-open>
-        <layout-slider-collapsed v-if="isCollapsed"></layout-slider-collapsed>
+        <layout-slider-open v-if="!isCollapsed" :menuwidth="menuwidth" :menuList="menuList" :menutheme="menutheme"></layout-slider-open>
+        <layout-slider-collapsed v-if="isCollapsed" :menuList="menuList" :menutheme="menutheme"></layout-slider-collapsed>
       </Sider>
       <Layout>
         <Header class="layout-header-bar">
           <content-toolbar
             :sliderCollapsed="isCollapsed"
             @toggleSliderCollapsed="toggleSliderCollapsedhand"
+            @themeChange="themeChange"
           ></content-toolbar>
           <content-tabs></content-tabs>
         </Header>
@@ -49,7 +50,8 @@ export default {
   data: () => {
     return {
       isCollapsed: false, // 控制slider的收起/展开
-      sliderwidth:'200'
+      sliderwidth:'200',
+      menutheme:'dark', //左侧菜单栏的主题
     };
   },
   props: {}, //父组件传递参数，可选
@@ -91,6 +93,9 @@ export default {
     toggleSliderCollapsedhand() {
       this.isCollapsed = !this.isCollapsed;
     },
+    themeChange(theme){
+      this.menutheme=theme;
+    }
   },
   created() {},
   mounted() {},

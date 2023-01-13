@@ -19,8 +19,8 @@ const appRoutes = [{
 }]
 
 // 放在路由出口  layout/index.vue 中的
-//1--菜单页面，需要增加type=menu 来说明
-//2--非菜单页面
+//1--菜单页面，需要增加  menu =true 来说明
+//2--非菜单页面   menu= false
 // 左侧菜单 和 content-tabs 需要显示这部分的信息
 const layoutRoutes = [{
     path: '/A',
@@ -28,7 +28,7 @@ const layoutRoutes = [{
     meta: {
         title: "A",
         icon: 'md-desktop',
-        type: "menu",
+        menu: true
     },
     component: () => import('../views/layout/index.vue'),
     children: [{
@@ -37,9 +37,19 @@ const layoutRoutes = [{
         meta: {
             title: "A-a",
             icon: 'ios-pie',
-            type: "menu",
+            menu: true
         },
         component: () => import('../views/A/A-a/index.vue')
+    }, {
+        //二级菜单 非菜单页面
+        path: '/A-b',
+        name: 'A-b',
+        meta: {
+            title: "A-b",
+            icon: 'ios-pie',
+            menu: false
+        },
+        component: () => import('../views/A/A-b/index.vue')
     }],
 }, {
     path: '/B',
@@ -47,7 +57,7 @@ const layoutRoutes = [{
     meta: {
         title: 'B',
         icon: 'md-bookmarks',
-        type: 'menu',
+        menu: true
     },
     component: () => import('../views/layout/index.vue'),
     children: [{
@@ -56,7 +66,7 @@ const layoutRoutes = [{
         meta: {
             title: "B-a",
             icon: 'ios-pie',
-            type: "menu",
+            menu: true
         },
         component: () => import('../views/B/B-a/index.vue')
     }, {
@@ -65,7 +75,7 @@ const layoutRoutes = [{
         meta: {
             title: "B-b",
             icon: 'ios-pie',
-            type: "menu",
+            menu: true
         },
         component: () => import('../views/B/B-b/index.vue')
     }]
@@ -75,7 +85,7 @@ const layoutRoutes = [{
     meta: {
         title: 'C',
         icon: 'md-bookmarks',
-        type: 'menu',
+        menu: true
     },
     component: () => import('../views/layout/index.vue'),
     children: [{
@@ -84,7 +94,7 @@ const layoutRoutes = [{
         meta: {
             title: 'C-a',
             icon: "ios-pie",
-            type: 'menu',
+            menu: true
         },
         component: () => import("../views/C/C-a/index.vue"),
         children: [{
@@ -93,9 +103,19 @@ const layoutRoutes = [{
             meta: {
                 title: 'C-a-1',
                 icon: "ios-pie",
-                type: 'menu',
+                menu: true
             },
             component: () => import('../views/C/C-a/C-a-1/index.vue')
+        },{
+            //三级菜单是非菜单数据
+            path: '/C-a-2',
+            name: "C-a-2",
+            meta: {
+                title: 'C-a-2',
+                icon: "ios-pie",
+                menu: false
+            },
+            component: () => import('../views/C/C-a/C-a-2/index.vue')
         }]
     }]
 }];
