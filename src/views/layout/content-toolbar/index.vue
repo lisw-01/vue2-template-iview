@@ -29,11 +29,33 @@
         <DropdownMenu slot="list">
           <DropdownItem name="signOut">退出</DropdownItem>
           <DropdownItem name="userInfo">用户</DropdownItem>
-          <DropdownItem name="dark">dark</DropdownItem>
-          <DropdownItem name="light">light</DropdownItem>
         </DropdownMenu>
       </Dropdown>
+      <div
+        style="margin-left: 10px; cursor: pointer"
+        @click="sysConfigModalShow = true"
+      >
+        <Icon type="md-keypad" title="系统设置" />
+      </div>
     </div>
+
+    <!-- 系统设置抽屉 -->
+    <Drawer title="系统设置" :closable="false" v-model="sysConfigModalShow">
+      <h5 slot="header">系统设置1</h5>
+      <Form label-position="top">
+        <FormItem label="菜单栏样式">
+          <RadioGroup
+            v-model="sysConfig.sliderTheme"
+            type="button"
+            button-style="solid"
+            @on-change="changeSysTheme"
+          >
+            <Radio label="dark"></Radio>
+            <Radio label="light"></Radio>
+          </RadioGroup>
+        </FormItem>
+      </Form>
+    </Drawer>
   </div>
 </template>
 <script>
@@ -41,7 +63,12 @@ import { BreadcrumbItem } from "view-design";
 
 export default {
   data: () => {
-    return {};
+    return {
+      sysConfigModalShow: false,
+      sysConfig: {
+        sliderTheme: "dark",
+      },
+    };
   },
   props: {
     sliderCollapsed: {
@@ -58,6 +85,9 @@ export default {
     },
   },
   methods: {
+    changeSysTheme(theme) {
+      this.$emit("themeChange", theme);
+    },
     toggleSliderDone() {
       this.$emit("toggleSliderCollapsed");
     },
@@ -70,16 +100,6 @@ export default {
           break;
         case "userInfo":
           {
-          }
-          break;
-        case "dark":
-          {
-            this.$emit("themeChange",'dark');
-          }
-          break;
-        case "light":
-          {
-            this.$emit("themeChange",'light');
           }
           break;
       }

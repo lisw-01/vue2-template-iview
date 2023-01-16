@@ -7,7 +7,7 @@
 export default {
     data:()=>{
         return {
-           msg:'content-tabs'
+           msg:''
         }
     }
 }

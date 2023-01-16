@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { staticRoutes, layoutStaticMenus } from './static-routes'
+import { staticRoutes, layoutStaticRoutes } from './static-routes'
 import iView from 'view-design'
 import store from '../store/storeconfig'
 import mystore from '../libs/myStore';
@@ -84,17 +84,20 @@ router.beforeEach((to, from, next) => {
   getComponentName(matched[0]).then((componentName) => {
     //路由出口在 layout/index.vue
     if ((componentName == 'layout' || componentName == null) && !store.state.app.asyncRoutesGetOver) {
-      store.commit('app/setMenuList', layoutStaticMenus || []);
+      const layoutStaticMenus = util.getLayoutStaticMenus(layoutStaticRoutes);
+      store.commit('app/setMenuList', layoutStaticMenus || []);  // 左侧菜单
+      store.commit('app/setRouteTree', util.getRouteTree(layoutStaticRoutes,null) || []);  // 完整路由树形关系数据
       //添加动态路由
       util.getAsyncRoutes().then((resp) => {
-        const aysRoutesTree = util.toStaticRoutes(resp, '-1');  // 表格数据转树形数据
-        aysRoutesTree.forEach(v => {
+        const staticRoutes_add = util.toStaticRoutes(resp, '-1');
+        staticRoutes_add.forEach(v => {
           router.addRoute(v); //添加,  添加完路由还会重复执行一遍路由守卫
         });
         store.state.app.asyncRoutesGetOver = true;
         //左侧菜单更新(动态路由部分)
-        store.commit('app/setMenuList', util.getLayoutStaticMenus(aysRoutesTree));
-        //左侧菜单的 opennames, 动态路由刷新，matched是[]
+        store.commit('app/setMenuList', util.getLayoutStaticMenus(staticRoutes_add)); // 左侧菜单
+        store.commit('app/setRouteTree', util.tableToTree(resp, '-1',null));  // 完整路由树形关系数据
+        //左侧菜单(open-slider)的 opennames, 动态路由刷新，matched是[]
         store.commit("app/updateOpenNames", {
           type: "matched",
           data: matched,
@@ -111,7 +114,7 @@ router.beforeEach((to, from, next) => {
     } else {
       if (matched.length) {
         if (componentName == 'layout' && store.state.app.asyncRoutesGetOver) {
-          //左侧菜案的 opennames
+          //左侧菜单(open-slider)的 opennames, 动态路由刷新，matched是[]
           store.commit("app/updateOpenNames", {
             type: "matched",
             data: matched,

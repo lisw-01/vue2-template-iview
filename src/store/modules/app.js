@@ -7,8 +7,8 @@ const app = {
         singkey: '', // 服务端返回的 HmacSHA1   数据传输加密密钥
         token: '', //  请求token(有时效)
         asyncRoutesGetOver: false,  // 异步路由数据是否请求过了
-        menuList: [], //左侧菜单数据， 有菜单之间的关系
-        staticRoutes:[], //路由
+        menuList: [], //左侧菜单数据
+        routeTree: [], //完整路由树形关系数据（包含非菜单页面）
         openNames: [], // 展开的 Submenu 的 name 集合  Array
         BreadcrumbItems: [], // 面包屑数据对象(对象  是  matched)
 
@@ -30,10 +30,14 @@ const app = {
         layout(state) {
             sessionStorage.clear();
         },
+        setRouteTree(state, routetree) {
+            state.routeTree = state.routeTree.concat(routetree);
+            console.log('完整路由树形数据', state.routeTree);
+        },
         // 设置左侧菜单数据
         setMenuList(state, menulist) {
-            state.menuList = state.menuList.concat(util.LayoutStaticMenusLink(menulist,null));  // 动态路由获取的菜单需要concat
-            console.log('左侧菜单数据',state.menuList);
+            state.menuList = state.menuList.concat(menulist);
+            console.log('左侧菜单数据', state.menuList);
         },
         // 更新打开的菜单
         updateOpenNames(state, obj) {
@@ -69,26 +73,13 @@ const app = {
         },
         //更新面包屑数据
         updateBreadCrumbItems(state, items) {
-            // 保持和左侧菜单树一致 
+            state.BreadcrumbItems = [];
             if (items && items.length) {
-                let temp = [...items];
-                const mathed0 = items[0];
-                const { name } = mathed0;
-                //（左侧菜单，当二级菜单有且只有一个，且该二级菜单下无三级菜单，  二级菜单会提级）
-                for (let i = 0; i < state.menuList.length; i++) {
-                    const name1 = state.menuList[i].name;
-                    const children1 = state.menuList[i].children;
-                    if (name == name1) {
-                        //判断一级菜单是否只有一个二级菜单，且该二级菜单下无三级菜单
-                        if (children1 && children1.length == 1 && !children1[0].children) {
-                            temp.shift();
-                            break
-                        }
-                    }
-                }
-                state.BreadcrumbItems = temp;
-            } else {
-                state.BreadcrumbItems = [];
+                const matchedLast = items[items.length - 1];
+                //通过  state.routeTree 处理
+                const linkRoutes = util.getLeafs_FromRouteTree(state.routeTree, matchedLast.name);
+                state.BreadcrumbItems = linkRoutes;
+                console.log('面包屑数据', state.BreadcrumbItems);
             }
         }
     },

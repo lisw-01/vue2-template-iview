@@ -188,6 +188,16 @@ const DB_ASYNC_ROUTES = [{
   componentPath: 'D/D-b/index.vue',
   pid: 1,
   roleid: [1],
+},{
+  id:4,
+  name:'D-a-add',
+  path:'/D-a-add',
+  title:'D-a-add',
+  icon:"ios-pie",
+  menu:false,
+  componentPath:'D/D-a/D-a-add/index.vue',
+  pid:2,
+  roleid: [1],
 }]
 exports.asyncRoutes = DB_ASYNC_ROUTES;
 

@@ -22,7 +22,7 @@ const appRoutes = [{
 //1--菜单页面，需要增加  menu =true 来说明
 //2--非菜单页面   menu= false
 // 左侧菜单 和 content-tabs 需要显示这部分的信息
-const layoutRoutes = [{
+const layoutStaticRoutes = [{
     path: '/A',
     name: 'A',
     meta: {
@@ -30,7 +30,7 @@ const layoutRoutes = [{
         icon: 'md-desktop',
         menu: true
     },
-    component: () => import('../views/layout/index.vue'),
+    component: () => import('../views/layout/index.vue'),  //二级菜单的路由出口
     children: [{
         path: '/A-a',
         name: 'A-a',
@@ -41,15 +41,16 @@ const layoutRoutes = [{
         },
         component: () => import('../views/A/A-a/index.vue')
     }, {
-        //二级菜单 非菜单页面
-        path: '/A-b',
-        name: 'A-b',
+        //二级菜单下 非菜单页面,   放到路由出口 layout/index.vue 中
+        path: '/A-a-add',
+        name: 'A-a-add',
         meta: {
-            title: "A-b",
+            title: "A-a-add",
             icon: 'ios-pie',
-            menu: false
+            menu: false,
+            parenRoutetName: 'A-a'
         },
-        component: () => import('../views/A/A-b/index.vue')
+        component: () => import('../views/A/A-a/A-a-add/index.vue')
     }],
 }, {
     path: '/B',
@@ -59,7 +60,7 @@ const layoutRoutes = [{
         icon: 'md-bookmarks',
         menu: true
     },
-    component: () => import('../views/layout/index.vue'),
+    component: () => import('../views/layout/index.vue'),  //二级菜单的路由出口
     children: [{
         path: '/B-a',
         name: 'B-a',
@@ -87,7 +88,7 @@ const layoutRoutes = [{
         icon: 'md-bookmarks',
         menu: true
     },
-    component: () => import('../views/layout/index.vue'),
+    component: () => import('../views/layout/index.vue'),  //二级菜单的路由出口
     children: [{
         path: '/C-a',
         name: 'C-a',
@@ -96,7 +97,7 @@ const layoutRoutes = [{
             icon: "ios-pie",
             menu: true
         },
-        component: () => import("../views/C/C-a/index.vue"),
+        component: () => import("../views/C/C-a/index.vue"), //三级菜单的路由出口
         children: [{
             path: '/C-a-1',
             name: "C-a-1",
@@ -106,21 +107,21 @@ const layoutRoutes = [{
                 menu: true
             },
             component: () => import('../views/C/C-a/C-a-1/index.vue')
-        },{
-            //三级菜单是非菜单数据
-            path: '/C-a-2',
-            name: "C-a-2",
+        }, {
+            //三级菜单下非菜单页面   放到对应的三级菜单的路由出口中
+            path: '/C-a-1-add',
+            name: "C-a-1-add",
             meta: {
-                title: 'C-a-2',
+                title: 'C-a-1-add',
                 icon: "ios-pie",
-                menu: false
+                menu: false,
+                parenRoutetName: 'C-a-1'
             },
-            component: () => import('../views/C/C-a/C-a-2/index.vue')
+            component: () => import('../views/C/C-a/C-a-1/C-a-1-add')
         }]
     }]
 }];
 
 
-const staticRoutes = [...appRoutes, ...layoutRoutes];   //静态路由数据, app出口+ layout出口
-const layoutStaticMenus = util.getLayoutStaticMenus(layoutRoutes);  // 根据 layout出口的静态路由信息，获取 左侧菜单数据
-export { staticRoutes, layoutStaticMenus };
+const staticRoutes = [...appRoutes, ...layoutStaticRoutes];   //静态路由数据, app出口+ layout出口
+export { staticRoutes, layoutStaticRoutes };

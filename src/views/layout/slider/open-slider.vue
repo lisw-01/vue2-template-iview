@@ -40,12 +40,10 @@
               :title="menu1.children[0].title"
               :key="'menu1' + index"
               :class="[
-                activeMenuName === menu1.children[0].name &&
-                menutheme == 'dark'
+                activeMenuName1 === menu1.name && menutheme == 'dark'
                   ? 'menu-item-selected-dark'
                   : '',
-                activeMenuName === menu1.children[0].name &&
-                menutheme == 'light'
+                activeMenuName1 === menu1.name && menutheme == 'light'
                   ? 'menu-item-selected-light'
                   : '',
               ]"
@@ -156,11 +154,29 @@ export default {
   computed: {
     //激活菜单的name值  String | Number
     activeMenuName() {
-      return this.$route.name; // 因此菜单的name值要和   路由的name属性值保持对应
+      const activeRouteName = this.$route.name; // 因此菜单的name值要和   路由的name属性值保持对应
+      const route = this.$util.getNode_FromRouteTree(
+        this.$store.state.app.routeTree,
+        activeRouteName
+      );
+      if (route.meta.menu) {
+        //如果是菜单数据
+        return activeRouteName;
+      } else {
+        //如果是非菜单数据
+        return route.meta.parenRoutetName;
+      }
+    },
+    activeMenuName1() {
+      const activemenuname = this.$route.name;
+      const rootmenu = this.$util.getLeaf_FromRouteTree(
+        this.$store.state.app.routeTree,
+        activemenuname
+      );
+      return rootmenu ? rootmenu.name : "";
     },
     // 展开的 Submenu 的 name 集合  Array
     openNames() {
-      console.log(this.$store.state.app.openNames);
       return this.$store.state.app.openNames;
     },
   },
@@ -178,9 +194,7 @@ export default {
       });
     },
   },
-  created() {
-    console.log(this.menuList);
-  },
+  created() {},
   components: { Submenu, MenuItem },
 };
 </script>
@@ -190,13 +204,13 @@ export default {
   font-size: 2rem;
   // dark 主题下， 提升的二级菜单的选中状态
   .menu-item-selected-dark {
-    background-color: @menu-background-color-dark!important;
-    color: @menu-color-dark!important;
+    background-color: @menu-selected-background-color-dark!important;
+    color: @menu-selected-color-dark!important;
   }
   // light 主题下， 提升的二级菜单的选中状态
   .menu-item-selected-light {
-    background-color: @menu-background-color-light!important;
-    color: @menu-color-light!important;
+    background-color: @menu-selected-background-color-light!important;
+    color: @menu-selected-color-light!important;
   }
   .menu-item {
     width: 100%;

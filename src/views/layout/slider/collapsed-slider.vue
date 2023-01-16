@@ -8,10 +8,10 @@
             :class="[
               'menu-item',
               activeMenu1Name != menu1.name && menutheme == 'dark'
-                ? 'menu-item-dark'
+                ? 'menu-item-default-dark'
                 : '',
               activeMenu1Name != menu1.name && menutheme == 'light'
-                ? 'menu-item-light'
+                ? 'menu-item-default-light'
                 : '',
               activeMenu1Name == menu1.name && menutheme == 'dark'
                 ? 'menu-item-selected-dark'
@@ -44,10 +44,10 @@
             :class="[
               'menu-item',
               activeMenu1Name != menu1.name && menutheme == 'dark'
-                ? 'menu-item-dark'
+                ? 'menu-item-default-dark'
                 : '',
               activeMenu1Name != menu1.name && menutheme == 'light'
-                ? 'menu-item-light'
+                ? 'menu-item-default-light'
                 : '',
               activeMenu1Name == menu1.name && menutheme == 'dark'
                 ? 'menu-item-selected-dark'
@@ -79,10 +79,10 @@
               :class="[
                 'menu-item',
                 activeMenu1Name != menu1.name && menutheme == 'dark'
-                  ? 'menu-item-dark'
+                  ? 'menu-item-default-dark'
                   : '',
                 activeMenu1Name != menu1.name && menutheme == 'light'
-                  ? 'menu-item-light'
+                  ? 'menu-item-default-light'
                   : '',
                 activeMenu1Name == menu1.name && menutheme == 'dark'
                   ? 'menu-item-selected-dark'
@@ -154,7 +154,7 @@ export default {
     //激活菜单所属一级菜单的 name值 【collapsed-slier只处理一级菜单】
     activeMenu1Name() {
       const activemenuname = this.$route.name;
-      const rootmenu = this.$util.getLeaf(this.menuList, activemenuname);
+      const rootmenu = this.$util.getLeaf_FromRouteTree(this.$store.state.app.routeTree, activemenuname);
       return rootmenu ? rootmenu.name : "";
     },
   },
@@ -183,21 +183,21 @@ export default {
     line-height: 50px;
     width: 100%;
   }
-  .menu-item-dark{
-    background-color:  @menu-background-color-dark;
-    color: rgba(255,255,255,.7);
+  .menu-item-default-dark {
+    background-color: @menu-default-background-color-dark;
+    color: @menu-default-color-dark;
   }
-  .menu-item-light{
-    background-color: @menu-background-color-light;
-    
+  .menu-item-default-light {
+    background-color: @menu-default-background-color-light;
+    color: @menu-default-color-light;
   }
   .menu-item-selected-dark {
-    background-color: @menu-background-color-dark!important;
-    color: @menu-color-dark!important;
+    background-color: @menu-selected-background-color-dark!important;
+    color: @menu-selected-color-dark!important;
   }
   .menu-item-selected-light {
-    background-color: @menu-background-color-light!important;
-    color: @menu-color-light!important;
+    background-color: @menu-selected-background-color-light!important;
+    color: @menu-selected-color-light!important;
   }
 }
 @{deep} .ivu-dropdown {
