@@ -1,5 +1,6 @@
 import util from '@/libs/util';
-
+import myStore from '@/libs/myStore';
+import { vueInstance } from '@/main';
 const app = {
     namespaced: true,
     // vuex中的状态都是响应式的
@@ -11,7 +12,9 @@ const app = {
         routeTree: [], //完整路由树形关系数据（包含非菜单页面）
         openNames: [], // 展开的 Submenu 的 name 集合  Array
         BreadcrumbItems: [], // 面包屑数据对象(对象  是  matched)
-
+        tabs: [], // tabs标签页
+        tabsNameTemp: [], //tabs标签页-- tabs中路由对象name属性的映射
+        maxTabsCount: 5, //tab最大的数量
     },
     //通过 store.commit('test',{}) mutations中的同步函数（必须是同步函数） 更改  state中的状态（同步）
     //mutation 都是同步事务
@@ -49,38 +52,71 @@ const app = {
                 if (data.length) {
                     // 如果选中的是三级菜单，那么openNames 需要一级菜单+二级菜单
                     state.openNames = [];
-                    const menulist = state.menuList;
-                    const mathed0 = data[0];  //一级菜单
-                    const mathed1 = data[1]; // 二级菜单，  左侧菜单最多三级
-                    menulist.forEach((menu) => {
-                        const { name, children } = menu;
-                        if (mathed0.name == name) {
+                    const matchedLast = data[data.length - 1];
+                    //通过  state.routeTree 处理
+                    const linkRoutes = util.getLeafs_FromRouteTree(state.routeTree, matchedLast.name);
+                    linkRoutes.forEach((route) => {
+                        const { name, meta } = route;
+                        if (meta.menu) {
                             state.openNames.push(name);
                         }
-                        if (children && children.length) {
-                            children.forEach((menu2) => {
-                                const { name } = menu2;
-                                if (mathed1.name == name) {
-                                    state.openNames.push(name);
-                                }
-                            })
-                        }
-                    })
+                    });
                 } else {
                     state.openNames = data;
                 }
             }
+            console.log('openames', state.openNames);
         },
-        //更新面包屑数据
+        /**
+         * 更新面包屑数据
+         * @param {*} state 
+         * @param {*} items 
+         */
         updateBreadCrumbItems(state, items) {
             state.BreadcrumbItems = [];
             if (items && items.length) {
                 const matchedLast = items[items.length - 1];
                 //通过  state.routeTree 处理
                 const linkRoutes = util.getLeafs_FromRouteTree(state.routeTree, matchedLast.name);
-                state.BreadcrumbItems = linkRoutes;
+                state.BreadcrumbItems = linkRoutes.slice();
                 console.log('面包屑数据', state.BreadcrumbItems);
             }
+        },
+        //更新tab标签页
+        updateTabs(state, routedata) {
+            const { type, data } = routedata;
+            if (type == 'add') {
+                const routename = data.name;
+                //刷新，先从缓存中取
+                let tabs = myStore.getObj('TABS');
+                let tabsnames = myStore.getObj('TABSNAMES');
+                if (tabs) {
+                    state.tabs = tabs;
+                }
+                if (tabsnames) {
+                    state.tabsNameTemp = tabsnames;
+                }
+                if (!state.tabsNameTemp.includes(routename)) {
+                    if (state.tabs.length > state.maxTabsCount) {
+                        vueInstance.$Message.warning(`打开的标签页超过${state.maxTabsCount}个，请关闭一些`);
+                        return
+                    }
+
+                    //tabs 不存在，  放到tabs中，并且把这个tab置为选中状态
+                    state.tabs.push({ ...data, matched: null }); // 把route中的matched去掉
+                    state.tabsNameTemp.push(routename);
+                }
+
+            } else if (type == 'update') {
+                state.tabs = data;
+                state.tabsNameTemp = data.map((item) => {
+                    return item.name;
+                })
+            }
+            //存放在缓存，防止刷新丢失
+            myStore.setObj('TABS', state.tabs);
+            myStore.setObj('TABSNAMES', state.tabsNameTemp);
+            console.log('tabs数据', state.tabs, state.tabsNameTemp);
         }
     },
 

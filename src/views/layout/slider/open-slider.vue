@@ -1,6 +1,7 @@
 <template>
   <div class="slider-menu-open">
     <Menu
+      ref="side_menu"
       :mode="menu_mode"
       :theme="menutheme"
       :accordion="menu_accordion"
@@ -177,6 +178,12 @@ export default {
     },
     // 展开的 Submenu 的 name 集合  Array
     openNames() {
+      // openNames，activeName动态赋值不能在 $nextTick 中进行，不然dom更新方法会无效
+      // $nextTick下（dom已经生成），可以使用下列方法更新
+      this.$nextTick(() => {
+        this.$refs.side_menu.updateOpened();
+        this.$refs.side_menu.updateActiveName();
+      });
       return this.$store.state.app.openNames;
     },
   },

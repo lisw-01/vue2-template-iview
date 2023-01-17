@@ -77,6 +77,9 @@ router.beforeEach((to, from, next) => {
       store.state.app.menuList = [];
       store.state.app.openNames = [];
       store.state.app.BreadcrumbItems = [];
+      store.state.app.tabs = [];
+      store.state.app.tabsNameTemp = [];
+      mystore.clearStore();
     }
   }
 
@@ -86,7 +89,7 @@ router.beforeEach((to, from, next) => {
     if ((componentName == 'layout' || componentName == null) && !store.state.app.asyncRoutesGetOver) {
       const layoutStaticMenus = util.getLayoutStaticMenus(layoutStaticRoutes);
       store.commit('app/setMenuList', layoutStaticMenus || []);  // 左侧菜单
-      store.commit('app/setRouteTree', util.getRouteTree(layoutStaticRoutes,null) || []);  // 完整路由树形关系数据
+      store.commit('app/setRouteTree', util.getRouteTree(layoutStaticRoutes, null) || []);  // 完整路由树形关系数据
       //添加动态路由
       util.getAsyncRoutes().then((resp) => {
         const staticRoutes_add = util.toStaticRoutes(resp, '-1');
@@ -96,14 +99,14 @@ router.beforeEach((to, from, next) => {
         store.state.app.asyncRoutesGetOver = true;
         //左侧菜单更新(动态路由部分)
         store.commit('app/setMenuList', util.getLayoutStaticMenus(staticRoutes_add)); // 左侧菜单
-        store.commit('app/setRouteTree', util.tableToTree(resp, '-1',null));  // 完整路由树形关系数据
+        store.commit('app/setRouteTree', util.tableToTree(resp, '-1', null));  // 完整路由树形关系数据
         //左侧菜单(open-slider)的 opennames, 动态路由刷新，matched是[]
         store.commit("app/updateOpenNames", {
           type: "matched",
           data: matched,
         });
         //面包屑
-        store.commit('app/updateBreadCrumbItems', matched)
+        store.commit('app/updateBreadCrumbItems', matched);
         next({
           ...to, // next({ ...to })的目的,是保证路由添加完了再进入页面 (可以理解为重进一次)
           replace: true, // 重进一次, 不保留重复历史
@@ -120,7 +123,7 @@ router.beforeEach((to, from, next) => {
             data: matched,
           });
           //面包屑
-          store.commit('app/updateBreadCrumbItems', matched)
+          store.commit('app/updateBreadCrumbItems', matched);
         }
         next();
       } else {

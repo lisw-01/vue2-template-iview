@@ -154,7 +154,10 @@ export default {
     //激活菜单所属一级菜单的 name值 【collapsed-slier只处理一级菜单】
     activeMenu1Name() {
       const activemenuname = this.$route.name;
-      const rootmenu = this.$util.getLeaf_FromRouteTree(this.$store.state.app.routeTree, activemenuname);
+      const rootmenu = this.$util.getLeaf_FromRouteTree(
+        this.$store.state.app.routeTree,
+        activemenuname
+      );
       return rootmenu ? rootmenu.name : "";
     },
   },

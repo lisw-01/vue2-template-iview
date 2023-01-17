@@ -5,13 +5,23 @@
         ref="side"
         hide-trigger
         collapsible
-        :width=sliderwidth
+        :width="sliderwidth"
         :collapsed-width="80"
         v-model="isCollapsed"
+        :style="sliderStyle"
       >
         <app-logo :isCollapsed="isCollapsed"></app-logo>
-        <layout-slider-open v-if="!isCollapsed" :menuwidth="menuwidth" :menuList="menuList" :menutheme="menutheme"></layout-slider-open>
-        <layout-slider-collapsed v-if="isCollapsed" :menuList="menuList" :menutheme="menutheme"></layout-slider-collapsed>
+        <layout-slider-open
+          v-if="!isCollapsed"
+          :menuwidth="menuwidth"
+          :menuList="menuList"
+          :menutheme="menutheme"
+        ></layout-slider-open>
+        <layout-slider-collapsed
+          v-if="isCollapsed"
+          :menuList="menuList"
+          :menutheme="menutheme"
+        ></layout-slider-collapsed>
       </Sider>
       <Layout>
         <Header class="layout-header-bar">
@@ -20,10 +30,10 @@
             @toggleSliderCollapsed="toggleSliderCollapsedhand"
             @themeChange="themeChange"
           ></content-toolbar>
-          <content-tabs></content-tabs>
+          <content-tabs :tabs="tabs"></content-tabs>
         </Header>
         <Content class="layout-content" :style="contentStyle">
-           <!-- 缓存的页面 -->
+          <!-- 缓存的页面 -->
           <keep-alive>
             <router-view
               :key="$route.name"
@@ -44,14 +54,13 @@
   </div>
 </template>
 <script>
-
 export default {
   name: "layout",
   data: () => {
     return {
       isCollapsed: false, // 控制slider的收起/展开
-      sliderwidth:'200',
-      menutheme:'dark', //左侧菜单栏的主题
+      sliderwidth: "200",
+      menutheme: "dark", //左侧菜单栏的主题
     };
   },
   props: {}, //父组件传递参数，可选
@@ -68,17 +77,28 @@ export default {
         overFlow: "auto hidden",
       };
     },
-    menuList(){
+    menuList() {
       return this.$store.state.app.menuList;
     },
-    menuwidth(){
-      return this.sliderwidth+'px';
-    }
+    menuwidth() {
+      return this.sliderwidth + "px";
+    },
+    sliderStyle() {
+      if (this.menutheme == "light") {
+        return {
+          background: "#fff",
+        };
+      }
+    },
+    tabs() {
+      return this.$store.state.app.tabs;
+    },
   },
   watch: {
-    $route(to){
-       debugger
-    }
+    //检测 layout.vue出口【左侧菜单+ 非菜单页面】路由的变化，这些也是tabs的来源
+    $route(to) {
+      this.$store.commit("app/updateTabs", {type:"add",data:to});
+    },
   }, //可选
   components: {
     "layout-slider-open": () => import("@/views/layout/slider/open-slider"),
@@ -87,18 +107,21 @@ export default {
     "content-toolbar": () => import("@/views/layout/content-toolbar/index"),
     "content-tabs": () => import("@/views/layout/content-tabs/index"),
     "content-footer": () => import("@/views/layout/content-footer/index"),
-    "app-logo":()=>import('@/views/layout/app-logo/index')
+    "app-logo": () => import("@/views/layout/app-logo/index"),
   },
   methods: {
     toggleSliderCollapsedhand() {
       this.isCollapsed = !this.isCollapsed;
     },
-    themeChange(theme){
-      this.menutheme=theme;
-    }
+    themeChange(theme) {
+      this.menutheme = theme;
+    },
   },
   created() {},
-  mounted() {},
+  mounted() {
+    const tabinit = this.$route;
+    this.$store.commit("app/updateTabs", {type:'add',data:tabinit});
+  },
   beforeDestroy() {},
   destroyed() {},
 };

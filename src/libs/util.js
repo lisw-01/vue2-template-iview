@@ -309,7 +309,7 @@ util.getLeafs_FromRouteTree = function (tree, leafname) {
     for (let i = 0; i < tableDatas.length; i++) {
         const d = tableDatas[i];
         if (leafname == d.name) {
-            leafs.unshift(d);
+            leafs = [d];
             if (d.meta['parenRoutetName']) {
                 leafs = util.getLeafs_FromRouteTree(tree, d.meta['parenRoutetName']).concat(leafs);
             }
